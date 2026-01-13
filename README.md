@@ -19,3 +19,8 @@
   - [Configuration.md](./SPRING/Configuration.md)
   - [springContainer.md](./SPRING/springContainer.md)
   - [bean.md](./SPRING/bean.md)
+- [K8s](./K8s)
+  - [k8s.md](./K8s/k8s.md)
+  - [vi-bash.md](./K8s/vi-bash.md)
+- [JAVASCRIPT](./JAVASCRIPT)
+  - [javascript.md](./JAVASCRIPT/javascript.md)

@@ -197,7 +197,7 @@ Hello
 
 ## Eventloop
 
-![image.png](javascript/image.png)
+![image.png](../imgs/JAVASCRIPT/javascript-1.png)
 
 - **Heap**: 메모리 할당이 발생하는 곳
 - **Call Stack** : 실행된 코드의 환경을 저장하는 자료구조, 함수 호출 시 Call Stack에 push 됩니다. (Call Stack에 대한 자세한 설명은 [**여기**](https://medium.com/sjk5766/call-stack%EA%B3%BC-execution-context-%EB%A5%BC-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-3c877072db79))
