@@ -114,7 +114,7 @@ Gateway API는 “표준 리소스” + “구현체” 조합이라,
 * **NKS에서는 외부 노출이 곧 Floating IP 설계/재고 관리와 연결**되고,
 * **k9s는 이 모든 운영 상태를 빠르게 읽고 조치하는 ‘콘솔형 관제 도구’**로 가져가면 됩니다.
 
-원하면, 위 내용을 바탕으로 **“NKS에서 Gateway API(예: Envoy Gateway)로 외부 트래픽 받는 최소 아키텍처(로드밸런서/플로팅IP/게이트웨이/라우트) 한 장 요약”** 형태로도 정리해드리겠습니다.
+
 
 [1]: https://gateway-api.sigs.k8s.io/implementations/?utm_source=chatgpt.com "Implementations"
 [2]: https://kubernetes.io/blog/2025/11/06/gateway-api-v1-4/?utm_source=chatgpt.com "Gateway API 1.4: New Features"

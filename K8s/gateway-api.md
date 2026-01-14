@@ -80,4 +80,4 @@ NKS는 `type: LoadBalancer` Service를 만들면 **클라우드 LB를 자동 생
 ## 역할의 분리 (role-oriented)
 - 인프라 운영자/Devops 는 GatewayClass,Gateway를 관리 
 - 개발자는 트래픽 라우팅을 관리 (HTTPRoute)- Service
-  <img src="../imgs/K8S/role.png" alt="Gateway API Role-Oriented">
+  <img src="../imgs/K8S/role.png" alt="Gateway API Role-Oriented">cd
