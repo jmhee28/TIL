@@ -27,9 +27,9 @@
 ### JPA 이전의 문제
 
 - JDBC / MyBatis
-    - SQL 문자열 오타 → **컴파일 시점에 못 잡음**
-    - 컬럼 순서 실수 → **데이터 꼬임**
-    - RowMapper 반복 → **유지보수 지옥**
+  - SQL 문자열 오타 → **컴파일 시점에 못 잡음**
+  - 컬럼 순서 실수 → **데이터 꼬임**
+  - RowMapper 반복 → **유지보수 지옥**
 - 모든 오류가 **런타임에서만 터짐**
 
 👉 JPA는 **“DB도 개발 영역으로 끌어올린 기술”** 이다.
@@ -46,11 +46,11 @@ Web  |  WAS  |  RDB
 ```
 
 - Web / WAS
-    - **수평 확장(scale-out)** 가능
+  - **수평 확장(scale-out)** 가능
 - RDB
-    - **수평 확장 어려움**
-    - 보통 Active–Standby 구조
-    - 비용·성능 한계 존재
+  - **수평 확장 어려움**
+  - 보통 Active–Standby 구조
+  - 비용·성능 한계 존재
 
 👉 **결론: DB는 최대한 아껴 써야 한다**
 
@@ -67,8 +67,8 @@ Web  |  WAS  |  RDB
 
 - 정규화는 교과서, 실무는 **조회 성능**
 - 조회 비율이 압도적으로 높다면:
-    - count 컬럼
-    - 집계 결과 컬럼
+  - count 컬럼
+  - 집계 결과 컬럼
 - **쓰기 비용 < 읽기 비용** 구조에서 적극 검토
 
 ---
@@ -78,7 +78,7 @@ Web  |  WAS  |  RDB
 ### 1️⃣ ID 설계
 
 - **UUID v7 / TSID 권장**
-    - 시간 기반 → 인덱스 효율
+  - 시간 기반 → 인덱스 효율
 - PK만으로 대부분의 조회가 가능해야 함
 - “ID로만 조회 가능하게 설계”가 이상적
 
@@ -100,19 +100,16 @@ Web  |  WAS  |  RDB
 ### ⚠️ 실무 핵심 결론
 
 > “연관관계는 최소한으로, 양방향은 정말 필요할 때만”
-> 
 
 ---
 
 ### 1️⃣ OneToMany (실무에서 제일 문제)
 
 - 컬렉션 기반 조회:
-    - ❌ Pagination 불가
-    - ❌ 메모리 로딩
+  - ❌ Pagination 불가
+  - ❌ 메모리 로딩
 - `user.getPosts()`
-    
-    → 실무적으로 **의미 없음**
-    
+  → 실무적으로 **의미 없음**
 
 👉 **Repository에서 직접 조회**
 
@@ -136,17 +133,17 @@ User - ThumbsUp - Post
 
 ### 기본 FetchType
 
-| 관계 | 기본값 |
-| --- | --- |
-| @ManyToOne | EAGER |
-| @OneToMany | LAZY |
+| 관계       | 기본값 |
+| ---------- | ------ |
+| @ManyToOne | EAGER  |
+| @OneToMany | LAZY   |
 
 ### 실무 원칙
 
 - **EAGER 거의 쓰지 않음**
 - 필요한 경우만
-    - `JOIN FETCH`
-    - JPQL로 명시적 로딩
+  - `JOIN FETCH`
+  - JPQL로 명시적 로딩
 
 👉 EAGER 남발 = **N+1 지옥**
 
@@ -188,10 +185,8 @@ User - ThumbsUp - Post
 ### 강의자의 결론 (중요)
 
 > “JPQL 수준에서 해결하는 것이 운영·형상관리 측면에서 가장 좋다”
-> 
-> 
-> *Simple is the best*
-> 
+>
+> _Simple is the best_
 
 ---
 
@@ -232,7 +227,6 @@ User - ThumbsUp - Post
 > Denormalization, Cache Layer를 적극 활용해야 합니다.
 > 특히 OneToMany 컬렉션 조회와 EAGER Fetch는 성능 이슈를 유발하므로
 > JPQL과 JOIN FETCH로 명시적으로 제어하는 것이 중요합니다.
-> 
 
 ---
 
@@ -254,8 +248,8 @@ User - ThumbsUp - Post
 
 - `@Transactional`로 감싼 부분이 종료되는 시점에 커밋/롤백 결정
 - 내부에서 예외가 발생하는 경우
-    - `RuntimeException` 발생 시 롤백
-    - `Exception` 발생 시 커밋
+  - `RuntimeException` 발생 시 롤백
+  - `Exception` 발생 시 커밋
 
 ## 12. `equals(), hashCode(), toString() Overriding`
 
@@ -303,25 +297,25 @@ public class User {
 
 ### Entity의 “동일성” 기준은 보통 PK(ID)
 
-* DB에서 같은 row를 의미하려면 결국 **PK가 같아야** 합니다.
-* 그래서 `equals/hashCode`는 **ID만 사용**하는 게 가장 단순하고 안전합니다. 
+- DB에서 같은 row를 의미하려면 결국 **PK가 같아야** 합니다.
+- 그래서 `equals/hashCode`는 **ID만 사용**하는 게 가장 단순하고 안전합니다.
 
 ### 연관관계(예: posts)를 equals/hashCode에 넣으면 생기는 문제
 
 1. **순환 참조 가능**
 
-* User.equals → posts 비교 → Post.equals → user 비교 → 다시 User.equals …
+- User.equals → posts 비교 → Post.equals → user 비교 → 다시 User.equals …
   이런 식으로 무한 루프(스택오버플로) 가능
 
 2. **지연로딩(LAZY) 폭발**
 
-* equals 호출 한 번 했는데 연관 컬렉션을 비교하려고 하면서
+- equals 호출 한 번 했는데 연관 컬렉션을 비교하려고 하면서
   LAZY 로딩이 발생 → 쿼리 폭탄(N+1) 또는 성능 급락
 
 3. **HashSet/HashMap에서 깨짐**
 
-* `hashCode`는 “객체가 Set/Map에 들어간 뒤에는 변하면 안 된다”가 전제입니다.
-* 그런데 equals/hashCode에 연관관계나 변경 가능한 필드(name 등)를 넣으면
+- `hashCode`는 “객체가 Set/Map에 들어간 뒤에는 변하면 안 된다”가 전제입니다.
+- 그런데 equals/hashCode에 연관관계나 변경 가능한 필드(name 등)를 넣으면
   값이 바뀌는 순간 Set/Map에서 객체를 못 찾는 버그가 납니다.
 
 ---
@@ -330,16 +324,16 @@ public class User {
 
 `toString()`은 디버깅/로그에서 매우 자주 호출됩니다.
 
-* User.toString에 posts를 찍음
-* Post.toString에 user를 찍음
-  → `User -> Post -> User -> Post...` 무한 반복으로 **StackOverflowError**가 날 수 있습니다. 
+- User.toString에 posts를 찍음
+- Post.toString에 user를 찍음
+  → `User -> Post -> User -> Post...` 무한 반복으로 **StackOverflowError**가 날 수 있습니다.
 
 또는 LAZY 컬렉션을 출력하려다 **원치 않는 쿼리 호출**이 터질 수도 있습니다.
 
 그래서 실무에서는:
 
-* `toString()`은 **ID 같은 최소 정보만**
-* 연관관계는 절대 펼치지 않기
+- `toString()`은 **ID 같은 최소 정보만**
+- 연관관계는 절대 펼치지 않기
   이 원칙이 안전합니다.
 
 ---
@@ -350,20 +344,20 @@ public class User {
 return id != null && id.equals(other.id);
 ```
 
-* **id가 null이면(아직 저장 안 된 엔티티)** “동일하다고 보지 않겠다”
-* **id가 둘 다 같으면** “같은 엔티티(같은 DB row)로 보겠다”
+- **id가 null이면(아직 저장 안 된 엔티티)** “동일하다고 보지 않겠다”
+- **id가 둘 다 같으면** “같은 엔티티(같은 DB row)로 보겠다”
 
 ```java
 return Objects.hash(id);
 ```
 
-* hashCode도 id만으로 계산 → Set/Map 안정성 확보
+- hashCode도 id만으로 계산 → Set/Map 안정성 확보
 
 ```java
 return "User{id=" + id + "}";
 ```
 
-* toString에 연관관계 출력 안 함 → 순환참조/LAZY 쿼리 방지
+- toString에 연관관계 출력 안 함 → 순환참조/LAZY 쿼리 방지
 
 ---
 
@@ -378,31 +372,29 @@ return "User{id=" + id + "}";
 
 Entity에 `@Data`는 보통 위험합니다.
 
-* equals/hashCode/toString에 모든 필드(연관관계 포함)가 들어가서
+- equals/hashCode/toString에 모든 필드(연관관계 포함)가 들어가서
   위 문제들이 그대로 발생할 수 있습니다.
-  강의에서도 toString/equals/hashCode를 조심하라고 강조한 이유가 이것입니다. 
+  강의에서도 toString/equals/hashCode를 조심하라고 강조한 이유가 이것입니다.
 
 ---
 
 ## 5) 실무 권장 패턴(간단 규칙)
 
-* Entity에는 `@Getter` 정도만
-* `equals/hashCode`는 **ID만**
-* `toString`은 **ID, 핵심 필드만(연관관계 금지)**
-* 특히 양방향 연관관계일수록 더 엄격하게
-
+- Entity에는 `@Getter` 정도만
+- `equals/hashCode`는 **ID만**
+- `toString`은 **ID, 핵심 필드만(연관관계 금지)**
+- 특히 양방향 연관관계일수록 더 엄격하게
 
 ## 13. **동일성(identity)** 과 **동등성(equality)** 의 차이
 
-
 ## 1) 동일성(Identity)
 
-* 의미: **“완전히 같은 객체(레퍼런스)인가?”**
-* 기준: **메모리 주소(참조)**
-* Java 표현:
+- 의미: **“완전히 같은 객체(레퍼런스)인가?”**
+- 기준: **메모리 주소(참조)**
+- Java 표현:
 
-  * `a == b`
-  * `System.identityHashCode(a)`는 “참조 기반 해시”에 가깝습니다(동등성 해시와 별개)
+  - `a == b`
+  - `System.identityHashCode(a)`는 “참조 기반 해시”에 가깝습니다(동등성 해시와 별개)
 
 예:
 
@@ -416,12 +408,12 @@ System.out.println(a == b); // true (동일한 참조)
 
 ## 2) 동등성(Equality)
 
-* 의미: **“값/의미가 같은가?”**
-* 기준: **equals()가 정의한 규칙**
-* Java 표현:
+- 의미: **“값/의미가 같은가?”**
+- 기준: **equals()가 정의한 규칙**
+- Java 표현:
 
-  * `a.equals(b)`
-  * `hashCode()`는 equals와 **일관성**이 있어야 Set/Map에서 정상 동작
+  - `a.equals(b)`
+  - `hashCode()`는 equals와 **일관성**이 있어야 Set/Map에서 정상 동작
 
 예:
 
@@ -440,22 +432,22 @@ JPA는 같은 DB row라도 상황에 따라 “객체가 같아 보이거나/달
 
 ### (1) 같은 트랜잭션(같은 Persistence Context) 안에서는
 
-* 같은 PK를 조회하면 **항상 같은 객체 인스턴스**를 돌려주는 경향이 있습니다.
-* 즉, 보통 `==`도 true가 되는 경우가 많습니다. (1차 캐시 효과)
+- 같은 PK를 조회하면 **항상 같은 객체 인스턴스**를 돌려주는 경향이 있습니다.
+- 즉, 보통 `==`도 true가 되는 경우가 많습니다. (1차 캐시 효과)
 
 ### (2) 트랜잭션이 달라지면
 
-* 같은 PK라도 다른 시점에 조회한 객체는 **다른 인스턴스**
-* `==`는 false가 됩니다.
-* 그래서 “DB row 기준으로 같은 엔티티인가”를 판단하려면 보통 **equals(동등성) 규칙이 필요**합니다.
+- 같은 PK라도 다른 시점에 조회한 객체는 **다른 인스턴스**
+- `==`는 false가 됩니다.
+- 그래서 “DB row 기준으로 같은 엔티티인가”를 판단하려면 보통 **equals(동등성) 규칙이 필요**합니다.
 
 ---
 
 ## 4) 실무에서의 결론(엔티티 기준)
 
-* **동일성(==)**: “지금 이 JVM 메모리에서 같은 인스턴스냐”를 보는 것
-* **동등성(equals)**: “같은 도메인/DB row로 볼 것이냐”를 정의하는 것
+- **동일성(==)**: “지금 이 JVM 메모리에서 같은 인스턴스냐”를 보는 것
+- **동등성(equals)**: “같은 도메인/DB row로 볼 것이냐”를 정의하는 것
   → 엔티티는 일반적으로 **PK(ID)로 동등성을 정의**합니다.
 
- `equals/hashCode는 ID만`이라고 한 이유와 직결됩니다.
+`equals/hashCode는 ID만`이라고 한 이유와 직결됩니다.
 (연관관계나 변경 가능한 필드를 넣으면 동등성 정의가 깨지거나 순환참조/성능 문제가 생김)
