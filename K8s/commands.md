@@ -1,3 +1,4 @@
+
 ## kubectl 명령어 정리
 
 ### 기본 조회
@@ -53,3 +54,12 @@
 - 네임스페이스 지정: `-n <namespace>`
 - 출력 형식: `-o wide|yaml|json`
 - 라벨로 필터링: `-l key=value`
+
+
+
+- kubectl get gateway -n mhee: gateway 목록 조회
+- kubectl apply -f gateway.yaml # gateway 생성
+- kubectl apply -f : -f는 파일을 적용하는 명령어
+- kubectl get gateway -n mhee: gateway 목록 조회
+<img src="../imgs/K8S/cmd1.png" alt="Gateway">
+
