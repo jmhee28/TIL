@@ -2,9 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 const README_PATH = "README.md";
+const SUMMARY_PATH = "SUMMARY.md";
 const START_MARKER = "<!-- toc -->";
 const END_MARKER = "<!-- tocstop -->";
 const IGNORED_DIRS = new Set([".git", ".github", ".obsidian", "node_modules"]);
+const IGNORED_FILES = new Set([README_PATH, SUMMARY_PATH]);
 
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -12,6 +14,10 @@ function escapeRegExp(text) {
 
 function normalizePosix(filePath) {
   return filePath.split(path.sep).join("/");
+}
+
+function stripDotSlash(markdownPath) {
+  return markdownPath.replace(/^\.\//, "");
 }
 
 function truncateText(text, maxLength = 140) {
@@ -69,7 +75,7 @@ function listMarkdownFiles(rootDir = ".") {
         continue;
       }
 
-      if (relativePath === README_PATH) {
+      if (IGNORED_FILES.has(relativePath)) {
         continue;
       }
 
@@ -189,18 +195,33 @@ function buildTocLines(sections) {
   return tocLines;
 }
 
-function updateToc(readme) {
+function buildSummaryLines(sections) {
+  const summaryLines = ["# Summary", "", "* [Home](README.md)", ""];
+
+  for (const section of sections) {
+    summaryLines.push(`## ${section.title}`);
+
+    for (const file of section.files) {
+      summaryLines.push(`* [${file.name}](${stripDotSlash(file.path)})`);
+    }
+
+    summaryLines.push("");
+  }
+
+  if (summaryLines.length > 0 && summaryLines[summaryLines.length - 1] === "") {
+    summaryLines.pop();
+  }
+
+  return summaryLines.join("\n").concat("\n");
+}
+
+function updateToc(readme, sections) {
   const blockPattern = new RegExp(
     `${escapeRegExp(START_MARKER)}[\\s\\S]*?${escapeRegExp(END_MARKER)}`,
     "m"
   );
   if (!blockPattern.test(readme)) {
     throw new Error(`Could not find ${START_MARKER} ... ${END_MARKER} block.`);
-  }
-
-  const sections = collectSections();
-  if (sections.length === 0) {
-    throw new Error("No markdown files found. Refusing to overwrite TOC.");
   }
 
   const tocLines = buildTocLines(sections);
@@ -215,12 +236,29 @@ function updateToc(readme) {
   return readme.replace(blockPattern, replacement);
 }
 
-const original = fs.readFileSync(README_PATH, "utf8");
-const updated = updateToc(original);
+function writeIfChanged(filePath, nextContent) {
+  const current = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "";
+  if (current === nextContent) {
+    return false;
+  }
+  fs.writeFileSync(filePath, nextContent, "utf8");
+  return true;
+}
 
-if (original !== updated) {
-  fs.writeFileSync(README_PATH, updated, "utf8");
-  console.log("README TOC updated.");
+const sections = collectSections();
+if (sections.length === 0) {
+  throw new Error("No markdown files found. Refusing to overwrite TOC/SUMMARY.");
+}
+
+const readmeOriginal = fs.readFileSync(README_PATH, "utf8");
+const readmeUpdated = updateToc(readmeOriginal, sections);
+const readmeChanged = writeIfChanged(README_PATH, readmeUpdated);
+
+const summaryContent = buildSummaryLines(sections);
+const summaryChanged = writeIfChanged(SUMMARY_PATH, summaryContent);
+
+if (readmeChanged || summaryChanged) {
+  console.log("README TOC / SUMMARY updated.");
 } else {
-  console.log("README TOC already up to date.");
+  console.log("README TOC / SUMMARY already up to date.");
 }
